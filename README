@@ -1,0 +1,16 @@
+This Bejeweled bot is a HIGHLY modified version of the bot located at 
+http://andrewroycarter.com/c/bejeweled-bot-written-in-c-win32-api/
+and http://redd.it/et87y It's basically rewritten from the ground up,
+including new features such as heuristics, screen capturing, time limits,
+advanced, debugging, cell count, cell size, etc.
+
+Instructions:
+Running the bot is very straightforward. Once the program is run, press
+any key. The bot will then begin counting down from 5 seconds. The mouse
+cursor should be placed at the upper left hand corner of the game board.
+Once the count down has completed, the bot will capture the coordinates
+from the mouse cursor. Once captured, the bot will begin playing the game.
+
+Notes:
+Because the bot isn't perfect, it will sometimes get stuck. If it gets stuck,
+it should realize that it is stuck and will ask for help.
