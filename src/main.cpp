@@ -11,8 +11,8 @@
  */
 
 #include <windows.h>
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 
 COLORREF GetPixelRGB(int x, int y);
 
@@ -38,7 +38,7 @@ void CopyGrid();
 void MouseLeftClick();
 
 // Checks if there is a move available
-BOOL CheckMatch(int gemx, int gemy, int newx, int newy);
+bool CheckMatch(int gemx, int gemy, int newx, int newy);
 
 // Moves gem at position gemx x gemy, to newx x newy
 void MoveGem(int gemx, int gemy, int newx, int newy);
@@ -51,7 +51,7 @@ void CountDown(time_t seconds);
 
 // Checks a color based on its RGB values separately, and
 // allows for a given error threshold.
-BOOL ColorCheck(COLORREF c1, COLORREF c2);
+bool ColorCheck(COLORREF c1, COLORREF c2);
 
 // *****************************************
 // Configuration Start
@@ -74,7 +74,7 @@ const int cell_size = 40;
 
 // Size of the box that we're going to take the average. MUST be
 // less than cell_size
-const int box_size  = 2;
+const int box_size = 2;
 
 // Error threshold. This is how "picky" the bot is according
 // to color value differences. The higher the number means the
@@ -89,13 +89,13 @@ const int error_threshold = 15;
 // find a solution at the current threshold. Changes back after
 // every turn.
 int current_error_threshold = error_threshold; 
-int current_box_size		= box_size;
+int current_box_size = box_size;
 
 // Current center of the gem, this is where we base
 // our pixel coordinates of each cell
-int current_center          = (cell_size / 2) - (box_size / 2);
+int current_center = (cell_size / 2) - (box_size / 2);
 
-BOOL gem_matched = FALSE;
+bool gem_matched = false;
 
 COLORREF grid[cell_count][cell_count];
 COLORREF temp_grid[cell_count][cell_count];
@@ -106,7 +106,7 @@ POINT game_origin = { 0 };
 int screen_width = 0;
 int screen_height = 0;
 int screenshot_size = 0;
-char* screenshot_buffer = NULL;
+char* screenshot_buffer = 0;
 
 int main()
 {
@@ -180,7 +180,7 @@ void DisplayGrid()
 	fprintf(f, "</table>");
 
 	// Display average color table for GREEN
-	fprintf(f, "<meta http-equiv=\"refresh\" content=\"1\"><h2>Average Green Colors</h2>"
+	fprintf(f, "<h2>Average Green Colors</h2>"
 		"<table cellpadding=0 cellspacing=0>");
 	for (int i = 0; i < cell_count; i++)
 	{
@@ -196,7 +196,7 @@ void DisplayGrid()
 	fprintf(f, "</table>");
 
 	// Display average color table for BLUE
-	fprintf(f, "<meta http-equiv=\"refresh\" content=\"1\"><h2>Average Blue Colors</h2>"
+	fprintf(f, "<h2>Average Blue Colors</h2>"
 		"<table cellpadding=0 cellspacing=0>");
 	for (int i = 0; i < cell_count; i++)
 	{
@@ -255,7 +255,7 @@ void MakeMove()
 	if (gem_matched)
 	{
 		current_error_threshold = error_threshold;
-		gem_matched = FALSE;
+		gem_matched = false;
 	}
 
 	for (y = 0; y < cell_count; y++)
@@ -269,7 +269,7 @@ void MakeMove()
 				if (CheckMatch(x, y, x - 1, y))
 				{
 					MoveGem(x, y, x - 1, y);
-					gem_matched = TRUE;
+					gem_matched = true;
 					break;
 				}
 			}
@@ -281,7 +281,7 @@ void MakeMove()
 				if (CheckMatch(x,y,x+1,y))
 				{
 					MoveGem(x, y, x + 1, y);
-					gem_matched = TRUE;
+					gem_matched = true;
 					break;
 				}
 
@@ -293,7 +293,7 @@ void MakeMove()
 				if (CheckMatch(x, y, x, y - 1))
 				{
 					MoveGem(x, y, x, y - 1);
-					gem_matched = TRUE;
+					gem_matched = true;
 					break;
 				}
 
@@ -306,7 +306,7 @@ void MakeMove()
 				if (CheckMatch(x, y, x, y + 1))
 				{
 					MoveGem(x, y, x, y + 1);
-					gem_matched = TRUE;
+					gem_matched = true;
 					break;
 				}
 			}
@@ -345,11 +345,11 @@ void MoveGem(int gemx, int gemy, int newx, int newy)
 	MouseLeftClick();
 }
 
-BOOL ColorCheck(COLORREF c1, COLORREF c2)
+bool ColorCheck(COLORREF c1, COLORREF c2)
 {
-	BOOL red_match = FALSE;
-	BOOL blue_match = FALSE;
-	BOOL green_match = FALSE;
+	bool red_match = false;
+	bool blue_match = false;
+	bool green_match = false;
 
 	int c1_red = GetRValue(c1);
 	int c2_red = GetRValue(c2);
@@ -359,18 +359,18 @@ BOOL ColorCheck(COLORREF c1, COLORREF c2)
 	int c2_blue = GetBValue(c2);
 
 	if (c2_red < c1_red + error_threshold && c2_red > c1_red - error_threshold)
-		red_match = TRUE;
+		red_match = true;
 
 	if (c2_green < c1_green + error_threshold && c2_green > c1_green - error_threshold)
-		green_match = TRUE;
+		green_match = true;
 
 	if (c2_blue < c1_blue + error_threshold && c2_blue > c1_blue - error_threshold)
-		blue_match = TRUE;
+		blue_match = true;
 
 	return red_match && blue_match && green_match;
 }
 
-BOOL CheckMatch(int gemx, int gemy, int newx, int newy)
+bool CheckMatch(int gemx, int gemy, int newx, int newy)
 {
 	// Gets color of gem to look of matches
 	COLORREF c = temp_grid[gemy][gemx];
@@ -390,7 +390,7 @@ BOOL CheckMatch(int gemx, int gemy, int newx, int newy)
 	}
 
 	if (matched >= 3)
-		return TRUE;
+		return true;
 
 	// Row match
 	for (i = 0, matched = 0; i <= cell_count && matched < 3; i++)
@@ -403,9 +403,9 @@ BOOL CheckMatch(int gemx, int gemy, int newx, int newy)
 	}
 
 	if (matched >= 3)
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 
 // Averages each cell's color
@@ -469,7 +469,7 @@ void InitGame()
 	current_box_size		= box_size;
 	current_center          = (cell_size / 2) - (box_size / 2);
 
-	gem_matched = FALSE;
+	gem_matched = false;
 
 	// Get screen metrics
 	screen_width = GetSystemMetrics(SM_CXSCREEN);
@@ -477,7 +477,7 @@ void InitGame()
 
 	// Initialize screenshot bitmap buffer
 	screenshot_size = screen_width * screen_height * 4;
-	screenshot_buffer = (char*)malloc(screenshot_size);
+	screenshot_buffer = new char[screenshot_size];
 }
 
 void ClearGame()
@@ -492,8 +492,8 @@ void ClearGame()
 
 	// Cleanup bitmap buffer
 	screenshot_size = 0;
-	free(screenshot_buffer);
-	screenshot_buffer = NULL;
+	delete[] screenshot_buffer;
+	screenshot_buffer = 0;
 }
 
 COLORREF GetPixelRGB(int x, int y)
@@ -532,13 +532,13 @@ void Screenshot()
 	HWND hWnd = GetDesktopWindow();
 	HDC hdcScreen;
     HDC hdcWindow;
-    HDC hdcMemDC = NULL;
-    HBITMAP hbmScreen = NULL;
+    HDC hdcMemDC = 0;
+    HBITMAP hbmScreen = 0;
     BITMAP bmpScreen;
 
     // Retrieve the handle to a display device context for the client 
     // area of the window. 
-    hdcScreen = GetDC(NULL);
+    hdcScreen = GetDC(0);
     hdcWindow = GetDC(hWnd);
 
     // Create a compatible DC which is used in a BitBlt from the window DC
@@ -616,6 +616,6 @@ void Screenshot()
 done:
     DeleteObject(hbmScreen);
     DeleteObject(hdcMemDC);
-    ReleaseDC(NULL,hdcScreen);
+    ReleaseDC(0,hdcScreen);
     ReleaseDC(hWnd,hdcWindow);
 }
